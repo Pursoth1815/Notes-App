@@ -1,0 +1,49 @@
+name: notes
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.6.6
+  uuid: ^3.0.7
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  image_picker: ^0.8.4+4
+  path_provider: ^2.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator: ^2.0.0
+  build_runner: ^2.4.4
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Lufga
+      fonts:
+        - asset: assets/fonts/LufgaThin.ttf
+          weight: 100
+        - asset: assets/fonts/LufgaLight.ttf
+          weight: 300
+        - asset: assets/fonts/LufgaRegular.ttf
+          weight: 400
+        - asset: assets/fonts/LufgaMedium.ttf
+          weight: 500
+        - asset: assets/fonts/LufgaSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/LufgaBold.ttf
+          weight: 700
+        - asset: assets/fonts/LufgaBlack.ttf
+          weight: 900
+
+  assets:
+    - assets/fonts/
+    - assets/images/
+    - assets/
