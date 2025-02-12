@@ -1,4 +1,0 @@
-#Mon Feb 10 23:53:39 IST 2025
-base.0=/Users/pursoth/Downloads/Repo/Notes/notes/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

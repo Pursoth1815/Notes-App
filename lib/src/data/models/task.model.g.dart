@@ -18,6 +18,7 @@ class TaskAdapter extends TypeAdapter<Task> {
     };
     return Task(
       id: fields[0] as String?,
+      imageList: (fields[6] as List?)?.cast<String>(),
       category_id: fields[5] as String,
       title: fields[1] as String,
       createdAt: fields[4] as DateTime,
@@ -29,7 +30,7 @@ class TaskAdapter extends TypeAdapter<Task> {
   @override
   void write(BinaryWriter writer, Task obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class TaskAdapter extends TypeAdapter<Task> {
       ..writeByte(4)
       ..write(obj.createdAt)
       ..writeByte(5)
-      ..write(obj.category_id);
+      ..write(obj.category_id)
+      ..writeByte(6)
+      ..write(obj.imageList);
   }
 
   @override

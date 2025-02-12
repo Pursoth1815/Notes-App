@@ -1,0 +1,1 @@
+ /Users/pursoth/Downloads/Repo/Notes-App/.dart_tool/flutter_build/3c3206626d493b5677744b0bf2638899/native_assets.yaml: 

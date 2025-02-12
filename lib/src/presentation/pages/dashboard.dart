@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:notes/core/utils/utils.dart';
 import 'package:notes/src/data/models/category.model.dart';
@@ -11,14 +12,37 @@ import 'package:notes/src/presentation/controllers/dashboard_controller.dart';
 import 'package:notes/src/presentation/widgets/text_widget.dart';
 import '../controllers/task_controller.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
+  Dashboard({super.key});
+
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
   final TaskController _taskController = Get.put(TaskController());
+
   final CategoryController _categoryController = Get.put(CategoryController());
+
   final DashboardController _dashboardController = Get.put(DashboardController());
 
   final TextEditingController _notesController = TextEditingController();
 
-  Dashboard({super.key});
+  FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +70,12 @@ class Dashboard extends StatelessWidget {
                       color: Colors.white,
                       onPressed: () async {
                         String? path = await Utils().pickAndSaveImage();
-                        _dashboardController.textFieldFocusNode.requestFocus();
 
                         if (path != null) {
                           _taskController.tempImgPath.add(path);
                         }
+                        // FocusScope.of(context).requestFocus(_focusNode);
+                        SystemChannels.textInput.invokeMethod('TextInput.show');
                       },
                     ),
                     IconButton(
@@ -194,9 +219,11 @@ class Dashboard extends StatelessWidget {
                 },
                 onVerticalDragUpdate: (details) {
                   _dashboardController.onVerticalDragControl(DragGesture.update, updDetails: details);
+                  FocusScope.of(context).requestFocus(_focusNode);
                 },
                 onVerticalDragEnd: (details) async {
                   _dashboardController.onVerticalDragControl(DragGesture.end);
+                  FocusScope.of(context).requestFocus(_focusNode);
                 },
                 onHorizontalDragUpdate: (details) {
                   _dashboardController.onHorizontalDragControl(DragGesture.update, updDetails: details);
@@ -270,9 +297,10 @@ class Dashboard extends StatelessWidget {
               child: Column(
                 children: [
                   if (!_dashboardController.isCategoryOpen.value &&
-                      (_dashboardController.isDragging.value || _dashboardController.showTextField.value))
+                      (_dashboardController.isDragging.value || _dashboardController.isKeyboardVisible.value))
                     Opacity(
-                      opacity: _dashboardController.showTextField.value ? 1 : _dashboardController.dragProgress.value,
+                      opacity:
+                          _dashboardController.isKeyboardVisible.value ? 1 : _dashboardController.dragProgress.value,
                       child: Padding(
                         padding: EdgeInsets.only(
                           left: Get.width * 0.08,
@@ -280,23 +308,22 @@ class Dashboard extends StatelessWidget {
                           top: 12.0,
                         ),
                         child: TextField(
+                          focusNode: _focusNode,
                           controller: _notesController,
-                          autofocus: false,
+                          autofocus: true,
                           autocorrect: true,
-                          focusNode: _dashboardController.textFieldFocusNode,
                           decoration: InputDecoration(
                             hintText: 'Add Thoughts ...?',
                             hintStyle: TextStyle(color: Colors.grey),
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.white),
-                          onTapOutside: (event) {
-                            _dashboardController.showTextField.value = false;
-                          },
                           onSubmitted: (value) {
                             if (value.trim().isNotEmpty) {
-                              List<String> imgPath =
-                                  _taskController.tempImgPath.isNotEmpty ? _taskController.tempImgPath : [];
+                              List<String> imgPath = [];
+                              if (_taskController.tempImgPath.isNotEmpty) {
+                                imgPath.addAll(_taskController.tempImgPath);
+                              }
                               _taskController.addTask(Task(
                                   title: value.trim(),
                                   category_id: _categoryController.selectedCategory.id,
@@ -304,7 +331,6 @@ class Dashboard extends StatelessWidget {
                                   createdAt: DateTime.now()));
                               _notesController.clear();
                             }
-                            _dashboardController.showTextField.value = false;
                           },
                         ),
                       ),

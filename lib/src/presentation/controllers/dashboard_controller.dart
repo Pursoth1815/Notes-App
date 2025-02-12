@@ -11,9 +11,7 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
   RxDouble dragOffset = 0.0.obs;
   RxDouble dragProgress = 0.0.obs;
   RxBool isDragging = false.obs;
-  RxBool showTextField = false.obs;
   final defaultAnimDuration = const Duration(milliseconds: 300);
-  final FocusNode textFieldFocusNode = FocusNode();
 
   var isKeyboardVisible = false.obs;
 
@@ -21,7 +19,6 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
 
   @override
   void onClose() {
-    textFieldFocusNode.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.onClose();
   }
@@ -106,12 +103,10 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
     } else {
       if (dragOffset.value > 80) {
         HapticFeedback.vibrate();
-        showTextField.value = true;
       }
       isDragging.value = false;
       dragOffset.value = 0.0;
       dragProgress.value = 0.0;
-      textFieldFocusNode.requestFocus();
     }
   }
 }

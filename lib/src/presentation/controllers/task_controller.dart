@@ -18,9 +18,6 @@ class TaskController extends GetxController {
   void _loadTasks() {
     final box = HiveService.taskBox;
     tasks.assignAll(box.values.toList());
-    tasks.forEach(
-      (element) => log("ssss" + element.toJson().toString()),
-    );
     _sortTasks();
   }
 
@@ -43,8 +40,12 @@ class TaskController extends GetxController {
     if (tasks.any((taskLlist) => taskLlist.title.toLowerCase() == task.title.toLowerCase())) {
       return;
     }
+    try {
+      box.put(task.id, task);
+    } catch (e) {
+      print(e);
+    }
 
-    box.put(task.id, task);
     tasks.add(task);
     tempImgPath.clear();
     log("task final" + task.toJson().toString());
